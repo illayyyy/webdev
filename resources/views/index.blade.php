@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Users List</title>
-
     <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -77,9 +76,7 @@
                 </div>
                 <div class="card-body">
                     @if($users->isEmpty())
-                        <div class="alert alert-warning text-center">
-                            No users found.
-                        </div>
+                        <div class="alert alert-warning text-center">No users found.</div>
                     @else
                         <div class="row g-3">
                             @foreach ($users as $user)
@@ -87,6 +84,55 @@
                                     <div class="user-card">
                                         <strong>{{ $user->name }}</strong><br>
                                         <small class="text-muted">{{ $user->email }}</small>
+                                        <div class="mt-2 d-flex gap-2">
+                                            <!-- Edit Button -->
+                                            <button class="btn btn-sm text-white" style="background-color: #181091;" data-bs-toggle="modal" data-bs-target="#editUserModal{{ $user->id }}">
+                                                Edit
+                                            </button>
+
+                                            <!-- Delete Form -->
+                                            <form method="POST" action="{{ route('user.delete', $user->id) }}" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm text-white" style="background-color: #020200;">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Edit User Modal -->
+                                <div class="modal fade" id="editUserModal{{ $user->id }}" tabindex="-1" aria-labelledby="editUserModalLabel{{ $user->id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <form method="POST" action="{{ route('user.update', $user->id) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-primary text-white">
+                                                    <h5 class="modal-title" id="editUserModalLabel{{ $user->id }}">Edit User</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label>Name</label>
+                                                        <input type="text" name="name" class="form-control" value="{{ $user->name }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label>Email</label>
+                                                        <input type="email" name="email" class="form-control" value="{{ $user->email }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label>Password (leave blank to keep current)</label>
+                                                        <input type="password" name="password" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-success">Update</button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             @endforeach
